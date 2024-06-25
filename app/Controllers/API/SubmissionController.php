@@ -141,9 +141,8 @@ class SubmissionController extends BaseController
         return $this->respond($response);
     }
 
-    public function getSubmissionById()
+    public function show($id)
     {
-        $id = $this->request->getUri()->getSegment(4);
         $response = $this->submissionService->getSubmissionById($id);
 
         if (!$response->status === 200) {

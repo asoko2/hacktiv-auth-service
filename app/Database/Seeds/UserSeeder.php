@@ -24,6 +24,6 @@ class UserSeeder extends Seeder
 
         $users->addToDefaultGroup($user);
         $user->addGroup('hrd', 'pegawai');
-        $user->addPermission('admin.*', 'users.*');
+        $user->addPermission('users.create', 'users.edit', 'users.delete', 'submission.second-approval', 'submission.need-revision', 'submission.reject');
     }
 }

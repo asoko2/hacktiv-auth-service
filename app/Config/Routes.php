@@ -11,9 +11,15 @@ $routes->post('login', [AuthController::class, 'login']);
 
 $routes->group('api', ['filter' => ['jwt', 'blacklistedToken']], function ($routes) {
 
+  $routes->group('auth', function ($routes){
+    $routes->get('profile', [AuthController::class, 'getProfile']);
+    $routes->get('logout', [AuthController::class, 'logout']);
+  });
+  
   $routes->group('submissions',  function ($routes) {
 
     $routes->post('', [SubmissionController::class, 'storeSubmission']);
+    $routes->get('(:segment)', [SubmissionController::class, 'show/$1']);
 
     $routes->put('(:segment)/approval-atasan', [SubmissionController::class, 'approvalAtasan/$1']);
     $routes->put('(:segment)/approval-hrd', [SubmissionController::class, 'approvalHRD/$1']);
