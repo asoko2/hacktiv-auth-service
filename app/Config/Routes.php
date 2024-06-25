@@ -9,9 +9,9 @@ use CodeIgniter\Router\RouteCollection;
  */
 $routes->post('login', [AuthController::class, 'login']);
 
-$routes->group('api', function ($routes) {
+$routes->group('api', ['filter' => ['jwt', 'blacklistedToken']], function ($routes) {
 
-  $routes->group('submissions', ['filter' => 'jwt'], function ($routes) {
+  $routes->group('submissions',  function ($routes) {
 
     $routes->post('', [SubmissionController::class, 'storeSubmission']);
 

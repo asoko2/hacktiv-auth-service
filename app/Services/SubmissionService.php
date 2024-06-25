@@ -21,8 +21,6 @@ class SubmissionService
       'json' => $data
     ]);
 
-    log_message('debug', 'SubmissionService::storeSubmission() response: ' . json_encode($response));
-
     return json_decode($response->getBody());
   }
 
@@ -32,8 +30,6 @@ class SubmissionService
       'json' => $data
     ]);
 
-    log_message('debug', 'SubmissionService::approveAtasan() response: ' . json_encode($response));
-
     return json_decode($response->getBody());
   }
 
@@ -42,8 +38,6 @@ class SubmissionService
     $response = $this->client->put($this->baseUrl . "/submissions/$id/approval-hrd", [
       'json' => $data
     ]);
-
-    log_message('debug', 'SubmissionService::approveHRD() response: ' . json_encode($response));
 
     return json_decode($response->getBody());
   }
@@ -57,8 +51,6 @@ class SubmissionService
       'multipart' => $data
     ]);
 
-    log_message('debug', 'SubmissionService::uploadInvoice() response: ' . json_encode($response));
-
     return json_decode($response->getBody());
   }
 
@@ -67,8 +59,6 @@ class SubmissionService
     $response = $this->client->put($this->baseUrl . "/submissions/$id/approval-pengesah", [
       'json' => $data
     ]);
-
-    log_message('debug', 'SubmissionService::approvePengesah() response: ' . json_encode($response));
 
     return json_decode($response->getBody());
   }
@@ -79,8 +69,6 @@ class SubmissionService
       'json' => $data
     ]);
 
-    log_message('debug', 'SubmissionService::needRevision() response: ' . json_encode($response));
-
     return json_decode($response->getBody());
   }
 
@@ -89,8 +77,6 @@ class SubmissionService
     $response = $this->client->put($this->baseUrl . "/submissions/$id/update-submission", [
       'json' => $data
     ]);
-
-    log_message('debug', 'SubmissionService::updateSubmission() response: ' . json_encode($response));
 
     return json_decode($response->getBody());
   }
@@ -101,7 +87,11 @@ class SubmissionService
       'json' => $data
     ]);
 
-    log_message('debug', 'SubmissionService::reject() response: ' . json_encode($response));
+    return json_decode($response->getBody());
+  }
+
+  public function getSubmissionById($id){
+    $response = $this->client->get($this->baseUrl . "/submissions/$id");
 
     return json_decode($response->getBody());
   }

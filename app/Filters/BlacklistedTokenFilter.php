@@ -2,13 +2,13 @@
 
 namespace App\Filters;
 
+use App\Models\BlacklistedTokens;
 use CodeIgniter\Filters\FilterInterface;
 use CodeIgniter\HTTP\RequestInterface;
 use CodeIgniter\HTTP\ResponseInterface;
-use Firebase\JWT\JWT;
-use Firebase\JWT\Key;
+use Config\Services;
 
-class JWTFilter implements FilterInterface
+class BlacklistedTokenFilter implements FilterInterface
 {
     /**
      * Do whatever processing this filter needs to do.
@@ -27,21 +27,17 @@ class JWTFilter implements FilterInterface
      */
     public function before(RequestInterface $request, $arguments = null)
     {
-        
-        $header = $request->getServer('HTTP_AUTHORIZATION');
-        
-        $key = env('authjwt.keys.default.0.secret');
-        
-        if (!$header) {
-            return service('response')->setJSON([
-                'status' => ResponseInterface::HTTP_UNAUTHORIZED,
-                'message' => 'Unauthorized'
-            ])->setStatusCode(ResponseInterface::HTTP_UNAUTHORIZED);
+        $user_id = auth()->id();
+        $token = auth()->getTokenFromRequest($request);
+        $blacklist = new BlacklistedTokens();
+        if ($blacklist->getBlacklist($user_id, $token)) {
+            return Services::response()->setJSON([
+                'error' => 'Token has been blacklisted.'
+            ])
+            ->setStatusCode(ResponseInterface::HTTP_UNAUTHORIZED);
         }
 
-        $token = explode(' ', $header)[1];
-
-        log_message('info', 'Token: ' . $token);
+        return $request;
     }
 
     /**

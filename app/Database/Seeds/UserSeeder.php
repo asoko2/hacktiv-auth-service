@@ -3,44 +3,27 @@
 namespace App\Database\Seeds;
 
 use CodeIgniter\Database\Seeder;
+use CodeIgniter\Shield\Entities\User;
 
 class UserSeeder extends Seeder
 {
     public function run()
     {
-        $data = [
-            [
-                'nip' => '1234',
-                'name' => 'Admin',
-                'email' => 'admin@gmail.com',
-                'password' => password_hash('admin', PASSWORD_BCRYPT),
-            ],
-            [
-                'nip' => '111',
-                'name' => 'Atasan',
-                'email' => 'atasan@gmail.com',
-                'password' => password_hash('atasan', PASSWORD_BCRYPT),
-            ],
-            [
-                'nip' => '222',
-                'name' => 'HRD',
-                'email' => 'hrd@gmail.com',
-                'password' => password_hash('hrd', PASSWORD_BCRYPT),
-            ],
-            [
-                'nip' => '333',
-                'name' => 'Pengesah',
-                'email' => 'pengesah@gmail.com',
-                'password' => password_hash('pegawai', PASSWORD_BCRYPT),
-            ],
-            [
-                'nip' => '444',
-                'name' => 'Pegawai',
-                'email' => 'pegawai@gmail.com',
-                'password' => password_hash('pegawai', PASSWORD_BCRYPT),
-            ],
-        ];
+        $users = auth()->getProvider();
 
-        $this->db->table('users')->insertBatch($data);
+        $user = new User([
+            'nip' => '1234',
+            'username' => 'hrd',
+            'name' => 'HRD',
+            'email' => 'hrd@gmail.com',
+            'password' => '12341234',
+        ]);
+        $users->save($user);
+
+        $user = $users->findById($users->getInsertID());
+
+        $users->addToDefaultGroup($user);
+        $user->addGroup('hrd', 'pegawai');
+        $user->addPermission('admin.*', 'users.*');
     }
 }
