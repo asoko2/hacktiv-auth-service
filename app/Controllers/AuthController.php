@@ -70,7 +70,7 @@ class AuthController extends BaseController
         $loginRules = $rules->getLoginRules();
 
         log_message('debug', 'Validate Data');
-        if (!$this->validateData($this->request->getJSON(true), $loginRules,)) {
+        if (!$this->validateData($this->request->getJSON(true), $loginRules, )) {
             return $this->fail($this->validator->getErrors());
         }
 
@@ -100,7 +100,14 @@ class AuthController extends BaseController
         ];
 
         $token = $manager->generateToken($user, $jwtPayload);
-
+        
+        set_cookie(
+            name: 'access_token',
+            value: $token,
+            expire: 60 * 60 * 6,
+            httpOnly: true,
+        );
+        
         return $this->respond([
             'status' => ResponseInterface::HTTP_OK,
             'message' => 'Login success',
@@ -123,7 +130,7 @@ class AuthController extends BaseController
     public function logout()
     {
         $blacklistModel = new BlacklistedTokens();
-        
+
         $blacklistModel->save([
             'user_id' => auth()->id(),
             'token' => auth()->getTokenFromRequest($this->request)
