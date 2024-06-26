@@ -42,19 +42,19 @@ class AuthGroups extends ShieldAuthGroups
      */
     public array $groups = [
         'atasan' => [
-            'title'       => 'Atasan',
+            'title' => 'Atasan',
             'description' => 'First Approval.',
         ],
         'pegawai' => [
-            'title'       => 'Pegawai',
+            'title' => 'Pegawai',
             'description' => 'General users of the site. Often customers.',
         ],
         'hrd' => [
-            'title'       => 'HRD',
+            'title' => 'HRD',
             'description' => 'Second Approval',
         ],
         'pengesah' => [
-            'title'       => 'Pengesah',
+            'title' => 'Pengesah',
             'description' => 'Third Approval',
         ],
     ];
@@ -68,14 +68,14 @@ class AuthGroups extends ShieldAuthGroups
      * If a permission is not listed here it cannot be used.
      */
     public array $permissions = [
-        'users.create'                      => 'Can create new non-admin users',
-        'users.edit'                        => 'Can edit existing non-admin users',
-        'users.delete'                      => 'Can delete existing non-admin users',
-        'submission.first-approval'         => 'First person to approve submission',
-        'submission.second-approval'        => 'Second person to approve submission',
-        'submission.need-revision'          => 'Need revision',
-        'submission.reject'                 => 'Reject Submission',
+        'apps.common' => 'Common permission',
+        'users.manage' => 'Manage users',
+        'submission.first-approval' => 'First person to approve submission',
+        'submission.second-approval' => 'Second person to approve submission',
+        'submission.need-revision' => 'Need revision',
+        'submission.reject' => 'Reject Submission',
         'submission.authenticator-approval' => 'Approve Submission',
+        'submission.input' => 'Input new submission',
     ];
 
     /**
@@ -87,18 +87,31 @@ class AuthGroups extends ShieldAuthGroups
      * This defines group-level permissions.
      */
     public array $matrix = [
-        'superadmin' => [
-            'admin.*',
-            'users.*',
-            'beta.*',
+        // 'superadmin' => [
+        //     'apps.*',
+        //     'users.*',
+        //     'submission.*',
+        // ],
+        'atasan' => [
+            'apps.*',
+            'submission.first-approval',
+            'submission.need-revision',
+            'submission.reject',
         ],
-        'admin' => [
-            'admin.access',
-            'users.create',
-            'users.edit',
-            'users.delete',
-            'beta.access',
+        'hrd' => [
+            'apps.*',
+            'users.manage',
+            'submission.second-approval',
+            'submission.need-revision',
+            'submission.reject',
         ],
-        'user' => [],
+        'pengesah' => [
+            'apps.*',
+            'submission.authenticator-approval',
+        ],
+        'pegawai' => [
+            'apps.common',
+            'submission.input',
+        ],
     ];
 }
