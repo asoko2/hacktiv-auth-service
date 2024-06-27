@@ -19,52 +19,6 @@ class AuthController extends BaseController
 
     public function login()
     {
-        // $input = $this->request->getJSON();
-
-        // $userModel = new \App\Models\UserModel();
-        // $userData = $userModel->where('nip', $input->nip)->first();
-
-        // if (!$userData) {
-        //     return $this->response->setJSON([
-        //         'status' => ResponseInterface::HTTP_NOT_FOUND,
-        //         'message' => 'Invalid Credential'
-        //     ]);
-        // }
-
-        // if (!password_verify($input->password, $userData->password)) {
-        //     return $this->response->setJSON([
-        //         'status' => ResponseInterface::HTTP_UNAUTHORIZED,
-        //         'message' => 'Credential not match'
-        //     ]);
-        // }
-
-        // $key = env('JWT_SECRET');
-        // $payload = [
-        //     'nip' => $userData->nip,
-        //     'name' => $userData->username,
-        //     'email' => $userData['email'],
-        //     'iat' => time(),
-        //     'exp' => time() + 60 * 60 * 6
-        // ];
-
-        // $token = JWT::encode($payload, $key, 'HS256');
-
-        // set_cookie(
-        //     name: 'access_token',
-        //     value: $token,
-        //     expire: 60 * 60 * 6,
-        //     httpOnly: true,
-        // );
-
-        // return $this->response->setJSON([
-        //     'status' => ResponseInterface::HTTP_OK,
-        //     'message' => 'Login success',
-        //     'data' => [
-        //         'access_token' => $token
-        //     ]
-        // ]);
-
-
         //Codeigniter Shield JWT Auth
         $rules = new ValidationRules();
         $loginRules = $rules->getLoginRules();
@@ -96,18 +50,21 @@ class AuthController extends BaseController
 
         $jwtPayload = [
             'iat' => time(),
-            'exp' => time() + 60 * 60 * 6
+            'exp' => time() + 60 * 60 * 6,
+            'email' => $user->email,
+            'name' => $user->name,
+            'username' => $user->username,
         ];
 
         $token = $manager->generateToken($user, $jwtPayload);
-        
+
         set_cookie(
             name: 'access_token',
             value: $token,
             expire: 60 * 60 * 6,
             httpOnly: true,
         );
-        
+
         return $this->respond([
             'status' => ResponseInterface::HTTP_OK,
             'message' => 'Login success',
@@ -121,9 +78,48 @@ class AuthController extends BaseController
     {
         $user = auth()->user();
 
+        $db = \Config\Database::connect();
+        $builder = $db->table('auth_groups_users');
+
+        $userPermissions = $builder->select([
+            'auth_groups_users.group as group_name',
+            'auth_permissions_users.permission as permission_name'
+        ])
+            ->join('auth_permissions_users', 'auth_permissions_users.user_id = auth_groups_users.user_id')
+            ->where('auth_groups_users.user_id', $user->id)
+            ->get()
+            ->getResultArray();
+
+        $groupByGroup = [];
+
+        foreach ($userPermissions as $permission) {
+            $groupName = $permission['group_name'];
+            $permissionName = $permission['permission_name'];
+
+            if (!isset($groupByGroup[$groupName])) {
+                $groupByGroup[$groupName] = [];
+            }
+
+            $groupByGroup[$groupName][] = $permissionName;
+        }
+
+        // $userGroups = $builder->select([
+        //     'auth_groups_users.group as group_name',
+        // ])
+        //     ->where('auth_groups_users.user_id', $user->id)
+        //     ->get()
+        //     ->getResultArray();
+
+        
+
+
         return $this->respond([
             'status' => ResponseInterface::HTTP_OK,
-            'data' => $user
+            'data' => [
+                'user' => $user,
+                'permissions' => $userPermissions,
+                'groups' => $groupByGroup
+            ]
         ]);
     }
 
