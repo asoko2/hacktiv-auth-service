@@ -15,6 +15,7 @@ class UserModel extends ShieldUserModel
         $this->allowedFields = [
             ...$this->allowedFields,
             'nip',
+            'name'
         ];
     }
 }
