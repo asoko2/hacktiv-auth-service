@@ -27,16 +27,17 @@ class Filters extends BaseFilters
      */
     public array $aliases = [
         'blacklistedToken' => \App\Filters\BlacklistedTokenFilter::class,
-        'csrf'          => CSRF::class,
-        'toolbar'       => DebugToolbar::class,
-        'honeypot'      => Honeypot::class,
-        'invalidchars'  => InvalidChars::class,
+        'csrf' => CSRF::class,
+        'toolbar' => DebugToolbar::class,
+        'honeypot' => Honeypot::class,
+        'invalidchars' => InvalidChars::class,
         'secureheaders' => SecureHeaders::class,
-        'cors'          => Cors::class,
-        'forcehttps'    => ForceHTTPS::class,
-        'pagecache'     => PageCache::class,
-        'performance'   => PerformanceMetrics::class,
-        'jwt'           => JWTFilter::class,
+        'cors' => Cors::class,
+        'forcehttps' => ForceHTTPS::class,
+        'pagecache' => PageCache::class,
+        'performance' => PerformanceMetrics::class,
+        // 'jwt' => \CodeIgniter\Shield\Filters\JWTAuth::class,
+        // 'custom-jwt' => JWTFilter::class,
     ];
 
     /**
@@ -75,6 +76,12 @@ class Filters extends BaseFilters
             // 'honeypot',
             // 'csrf',
             // 'invalidchars',
+            'jwt' => [
+                'except' => ['api/login']
+            ],
+            'blacklistedToken' => [
+                'except' => ['api/login']
+            ]
         ],
         'after' => [
             // 'honeypot',

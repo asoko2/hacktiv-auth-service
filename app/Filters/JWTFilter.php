@@ -3,8 +3,10 @@
 namespace App\Filters;
 
 use CodeIgniter\Filters\FilterInterface;
+use CodeIgniter\HTTP\IncomingRequest;
 use CodeIgniter\HTTP\RequestInterface;
 use CodeIgniter\HTTP\ResponseInterface;
+use Config\Services;
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
 
@@ -27,21 +29,39 @@ class JWTFilter implements FilterInterface
      */
     public function before(RequestInterface $request, $arguments = null)
     {
-        
-        $header = $request->getServer('HTTP_AUTHORIZATION');
-        
-        $key = env('authjwt.keys.default.0.secret');
-        
-        if (!$header) {
-            return service('response')->setJSON([
-                'status' => ResponseInterface::HTTP_UNAUTHORIZED,
-                'message' => 'Unauthorized'
-            ])->setStatusCode(ResponseInterface::HTTP_UNAUTHORIZED);
+
+        if (!$request instanceof IncomingRequest) {
+            return;
         }
 
-        $token = explode(' ', $header)[1];
+        $authHeader = $request->getServer('HTTP_AUTHORIZATION');
+        $splitHeader = explode(' ', $authHeader);
 
-        log_message('info', 'Token: ' . $token);
+        log_message('info', 'JWTAuth: AuthHeader: ' . json_encode($splitHeader));
+
+        /** @var JWT $authenticator */
+        $authenticator = auth('jwt')->getAuthenticator();
+
+        $token = $authenticator->getTokenFromRequest($request);
+
+        log_message('info', 'JWTAuth: Token: ' . json_encode($token));
+
+        $result = $authenticator->attempt(['token' => $token]);
+
+        log_message('info', 'JWTAuth: Result: ' . json_encode($result->isOK()));
+        log_message('info', 'JWTAuth: Result: ' . json_encode($result->reason()));
+
+        if (!$result->isOK()) {
+            return Services::response()
+                ->setJSON([
+                    'error' => $result->reason(),
+                ])
+                ->setStatusCode(ResponseInterface::HTTP_UNAUTHORIZED);
+        }
+
+        if (setting('Auth.recordActiveDate')) {
+            $authenticator->recordActiveDate();
+        }
     }
 
     /**

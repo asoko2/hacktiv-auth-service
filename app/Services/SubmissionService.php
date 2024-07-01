@@ -95,4 +95,10 @@ class SubmissionService
 
     return json_decode($response->getBody());
   }
+
+  public function showByUser($id){
+    $response = $this->client->get($this->baseUrl . "/submissions/users/$id");
+
+    return json_decode($response->getBody());
+  }
 }

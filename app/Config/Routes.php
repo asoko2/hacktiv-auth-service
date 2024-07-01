@@ -2,6 +2,7 @@
 
 use App\Controllers\API\SubmissionController;
 use App\Controllers\AuthController;
+use App\Controllers\UserController;
 use CodeIgniter\Router\RouteCollection;
 
 /**
@@ -17,6 +18,7 @@ $routes->group('api', function ($routes) {
     $routes->group('auth', function ($routes) {
       $routes->get('profile', [AuthController::class, 'getProfile']);
       $routes->get('logout', [AuthController::class, 'logout']);
+      $routes->get('submissions', [SubmissionController::class, 'showByUser']);
     });
 
     $routes->group('submissions', function ($routes) {
@@ -34,6 +36,18 @@ $routes->group('api', function ($routes) {
       $routes->put('(:segment)/reject', [SubmissionController::class, 'reject/$1']);
 
       $routes->post('(:segment)/upload-invoice', [SubmissionController::class, 'uploadInvoice/$1']);
+    });
+
+    $routes->group('users', function ($routes) {
+      $routes->get('', [UserController::class, 'getAllUser']);
+      $routes->post('', [UserController::class, 'store']);
+      $routes->get('groups', [UserController::class, 'getUserWithGroup']);
+
+      $routes->get('(:segment)', [UserController::class, 'show/$1']);
+      $routes->put('(:segment)', [UserController::class, 'update/$1']);
+      $routes->delete('(:segment)', [UserController::class, 'delete/$1']);
+      $routes->post('(:segment)/sync-group', [UserController::class, 'syncGroup/$1']);
+
     });
   });
 });

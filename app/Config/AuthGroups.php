@@ -44,18 +44,37 @@ class AuthGroups extends ShieldAuthGroups
         'atasan' => [
             'title' => 'Atasan',
             'description' => 'First Approval.',
+            'permissions' => [
+                'submission.first-approval',
+                'submission.need-revision',
+                'submission.reject',
+            ],
         ],
         'pegawai' => [
             'title' => 'Pegawai',
             'description' => 'General users of the site. Often customers.',
+            'permissions' => [
+                'submission.input',
+                'submission.update',
+                'apps.common'
+            ],
         ],
         'hrd' => [
             'title' => 'HRD',
             'description' => 'Second Approval',
+            'permissions' => [
+                'users.manage',
+                'submission.second-approval',
+                'submission.need-revision',
+                'submission.reject',
+            ],
         ],
         'pengesah' => [
             'title' => 'Pengesah',
             'description' => 'Third Approval',
+            'permissions' => [
+                'submission.authenticator-approval',
+            ],
         ],
     ];
 
@@ -76,6 +95,7 @@ class AuthGroups extends ShieldAuthGroups
         'submission.reject' => 'Reject Submission',
         'submission.authenticator-approval' => 'Approve Submission',
         'submission.input' => 'Input new submission',
+        'submission.update' => 'Update submission',
     ];
 
     /**
@@ -112,6 +132,7 @@ class AuthGroups extends ShieldAuthGroups
         'pegawai' => [
             'apps.common',
             'submission.input',
+            'submission.update',
         ],
     ];
 }

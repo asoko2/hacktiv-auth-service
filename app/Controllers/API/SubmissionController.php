@@ -20,7 +20,15 @@ class SubmissionController extends BaseController
     public function storeSubmission()
     {
         $data = $this->request->getJSON();
-        $response = $this->submissionService->storeSubmission($data);
+
+        $userId = auth()->user()->id;
+        
+        $response = $this->submissionService->storeSubmission([
+            'request_user_id' => $userId,
+            'year' => $data->year,
+            'name' => $data->name,
+            'submissionItems' => $data->submissionItems,
+        ]);
 
         // log_message('debug', 'SubmissionController::storeSubmission() response: ' . json_encode($response));
         if (!$response->status === 200) {
@@ -151,4 +159,18 @@ class SubmissionController extends BaseController
 
         return $this->respond($response);
     }
+
+    public function showByUser(){
+        $userId = auth()->user()->id;
+        $response = $this->submissionService->showByUser($userId);
+
+        log_message('debug', 'SubmissionController::showByUser() response: ' . json_encode($response));
+        
+        if (!$response->status === 200) {
+            return $this->fail($response, $response->status);
+        }
+
+        return $this->respond($response);
+    }
+    
 }
