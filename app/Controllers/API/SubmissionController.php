@@ -172,5 +172,15 @@ class SubmissionController extends BaseController
 
         return $this->respond($response);
     }
+
+    public function showItems($id){
+        $response = $this->submissionService->showItems($id);
+
+        if (!$response->status === 200) {
+            return $this->fail($response, $response->status);
+        }
+
+        return $this->respond($response);
+    }
     
 }

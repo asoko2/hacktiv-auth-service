@@ -101,4 +101,10 @@ class SubmissionService
 
     return json_decode($response->getBody());
   }
+
+  public function showItems($id){
+    $response = $this->client->get($this->baseUrl . "/submissions/$id/items");
+
+    return json_decode($response->getBody());
+  }
 }
