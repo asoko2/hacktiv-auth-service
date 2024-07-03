@@ -72,9 +72,9 @@ class SubmissionService
     return json_decode($response->getBody());
   }
 
-  public function updateSubmission($id, $data)
+  public function update($id, $data)
   {
-    $response = $this->client->put($this->baseUrl . "/submissions/$id/update-submission", [
+    $response = $this->client->put($this->baseUrl . "/submissions/$id", [
       'json' => $data
     ]);
 
@@ -90,20 +90,39 @@ class SubmissionService
     return json_decode($response->getBody());
   }
 
-  public function getSubmissionById($id){
+  public function getSubmissionById($id)
+  {
     $response = $this->client->get($this->baseUrl . "/submissions/$id");
 
     return json_decode($response->getBody());
   }
 
-  public function showByUser($id){
+  public function showByUser($id)
+  {
     $response = $this->client->get($this->baseUrl . "/submissions/users/$id");
 
     return json_decode($response->getBody());
   }
 
-  public function showItems($id){
+  public function showItems($id)
+  {
     $response = $this->client->get($this->baseUrl . "/submissions/$id/items");
+
+    return json_decode($response->getBody());
+  }
+
+  public function updateItem($id, $data)
+  {
+    $response = $this->client->put($this->baseUrl . "/submission-items/$id", [
+      'json' => $data
+    ]);
+
+    return json_decode($response->getBody());
+  }
+
+  public function destroy($id)
+  {
+    $response = $this->client->delete($this->baseUrl . "/submissions/$id");
 
     return json_decode($response->getBody());
   }

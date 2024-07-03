@@ -22,7 +22,7 @@ class SubmissionController extends BaseController
         $data = $this->request->getJSON();
 
         $userId = auth()->user()->id;
-        
+
         $response = $this->submissionService->storeSubmission([
             'request_user_id' => $userId,
             'year' => $data->year,
@@ -121,12 +121,10 @@ class SubmissionController extends BaseController
         return $this->respond($response);
     }
 
-    public function updateSubmission($id)
+    public function update($id)
     {
         $data = $this->request->getJSON();
-        $response = $this->submissionService->updateSubmission($id, $data);
-
-        log_message('debug', 'SubmissionController::updateSubmission() response: ' . json_encode($response));
+        $response = $this->submissionService->update($id, $data);
 
         if (!$response->status === 200) {
             return $this->fail($response, $response->status);
@@ -149,6 +147,17 @@ class SubmissionController extends BaseController
         return $this->respond($response);
     }
 
+    public function destroy($id)
+    {
+        $response = $this->submissionService->destroy($id);
+
+        if (!$response->status === 200) {
+            return $this->fail($response, $response->status);
+        }
+
+        return $this->respondDeleted($response);
+    }
+
     public function show($id)
     {
         $response = $this->submissionService->getSubmissionById($id);
@@ -160,12 +169,13 @@ class SubmissionController extends BaseController
         return $this->respond($response);
     }
 
-    public function showByUser(){
+    public function showByUser()
+    {
         $userId = auth()->user()->id;
         $response = $this->submissionService->showByUser($userId);
 
         log_message('debug', 'SubmissionController::showByUser() response: ' . json_encode($response));
-        
+
         if (!$response->status === 200) {
             return $this->fail($response, $response->status);
         }
@@ -173,7 +183,8 @@ class SubmissionController extends BaseController
         return $this->respond($response);
     }
 
-    public function showItems($id){
+    public function showItems($id)
+    {
         $response = $this->submissionService->showItems($id);
 
         if (!$response->status === 200) {
@@ -182,5 +193,17 @@ class SubmissionController extends BaseController
 
         return $this->respond($response);
     }
-    
+
+    public function updateItem($id)
+    {
+        $data = $this->request->getJSON();
+        $response = $this->submissionService->updateItem($id, $data);
+
+        if (!$response->status === 200) {
+            return $this->fail($response, $response->status);
+        }
+
+        return $this->respond($response);
+    }
+
 }
